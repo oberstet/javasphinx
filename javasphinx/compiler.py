@@ -37,24 +37,26 @@ class JavadocRestCompiler(object):
 
         doc = javalang.javadoc.parse(documented.documentation)
 
-        if doc.description:
+        if hasattr(doc, 'description') and doc.description:
             output.add(self.__html_to_rst(doc.description))
             output.clear()
 
-        if doc.authors:
+        if hasattr(doc, 'authors') and doc.authors:
             output.add_line(':author: %s' % (self.__html_to_rst(', '.join(doc.authors)),))
 
-        for name, value in doc.params:
-            output.add_line(':param %s: %s' % (name, self.__html_to_rst(value)))
+        if hasattr(doc, 'params'):
+            for name, value in doc.params:
+                output.add_line(':param %s: %s' % (name, self.__html_to_rst(value)))
 
-        for exception in doc.throws:
-            description = doc.throws[exception]
-            output.add_line(':throws %s: %s' % (exception, self.__html_to_rst(description)))
+        if hasattr(doc, 'throws'):
+            for exception in doc.throws:
+                description = doc.throws[exception]
+                output.add_line(':throws %s: %s' % (exception, self.__html_to_rst(description)))
 
-        if doc.return_doc:
+        if hasattr(doc, 'return_doc') and doc.return_doc:
             output.add_line(':return: %s' % (self.__html_to_rst(doc.return_doc),))
 
-        if doc.tags.get('see'):
+        if hasattr(doc, 'tags') and doc.tags.get('see'):
             output.clear()
 
             see_also = ', '.join(self.__output_see(see) for see in doc.tags['see'])
